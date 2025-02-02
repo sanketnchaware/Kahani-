@@ -1,0 +1,33 @@
+import React from "react";
+import Layout from "./Layout/Layout";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Profile from "./Pages/Profile";
+
+import GoogleCallback from "./Components/GoogleCallback";
+import Introduction from "./Pages/Introduction";
+import Stories from "./Pages/Stories";
+import About from "./Pages/About";
+import Contact from "./Pages/Contact";
+import Auth from "./Pages/Auth/Auth";
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Introduction />} />
+          <Route path="/auth/google" component={GoogleCallback} />
+          <Route path="/login" element={<Auth />} />
+          <Route path="/signup" element={<Auth />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/stories" element={<Stories />} />
+          <Route path="/about-us" element={<About />} />
+
+          <Route path="/contact-us" element={<Contact />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
