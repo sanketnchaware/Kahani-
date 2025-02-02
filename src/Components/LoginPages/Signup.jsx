@@ -1,9 +1,10 @@
 // src/Signup.js
 import React, { useState } from "react";
 import CommonButton from "../Common/CommonButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextInput from "../Common/TextInput";
 import axiosInstance from "../../utils/axiosInstance";
+import { showToastMessage } from "../../utils/helpers";
 
 const Signup = () => {
   const fields = {
@@ -14,6 +15,8 @@ const Signup = () => {
     password1: "",
     password2: "",
   };
+
+  const navigate = useNavigate();
 
   const [params, setParams] = useState(fields);
   const [errors, setErrors] = useState(fields);
@@ -39,7 +42,8 @@ const Signup = () => {
         password: password1,
       })
       .then((response) => {
-        console.log("response:", response);
+        showToastMessage(response.data.message, "success");
+        navigate("/login");
       })
       .catch((error) => {
         console.log("error:", error);
