@@ -1,17 +1,24 @@
 // src/Login.js
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import CommonButton from "../Common/CommonButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextInput from "../Common/TextInput";
+import axiosInstance from "../../utils/axiosInstance";
+import { showToastMessage } from "../../utils/helpers";
+import UserContext from "../../userContext/userContext";
 
 const Login = () => {
+  const { setAuth } = useContext(UserContext);
+
   const fields = { email: "", password: "" };
+
+  const navigate = useNavigate();
 
   const [params, setParams] = useState(fields);
   const [errors, setErrors] = useState(fields);
 
   const handleChange = (e) => {
-    const { name, value } = e?.target?.value;
+    const { name, value } = e?.target;
 
     setParams({ ...params, [name]: value });
   };
@@ -25,12 +32,15 @@ const Login = () => {
 
     const { email, password } = params;
     axiosInstance
-      .post("/users", {
+      .post("/login", {
         email: email,
         password: password,
       })
       .then((response) => {
-        console.log("response:", response);
+        localStorage.setItem("authToken", response.data.token);
+        setAuth({ token: response.data.token, isAuthenticated: true });
+        showToastMessage(response.data.message, "success");
+        navigate("/");
       })
       .catch((error) => {
         console.log("error:", error);

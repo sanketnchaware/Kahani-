@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import CommonButton from "../Components/Common/CommonButton";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import TextInput from "../Components/Common/TextInput";
+import UserContext from "../userContext/userContext";
 
 const Introduction = () => {
   const { stories } = useSelector((state) => state.stories);
+  const { auth } = useContext(UserContext);
 
   const [email, setEmail] = useState("");
 
@@ -15,11 +17,19 @@ const Introduction = () => {
       <section className=" flex items-center px-44 bg-black text-white   min-h-screen">
         <div className="w-full space-y-10">
           <h2 className="text-center w-full">Write your Story here..</h2>
-          <div className="flex justify-center   w-full">
-            <CommonButton styles="w-fit invert" size="md">
-              Create Account
-            </CommonButton>
-          </div>
+          {!auth?.isAuthenticated ? (
+            <Link to="/signup" className="flex justify-center   w-full">
+              <CommonButton styles="w-fit invert" size="md">
+                Create Account
+              </CommonButton>
+            </Link>
+          ) : (
+            <Link to="/stories" className="flex justify-center   w-full">
+              <CommonButton styles="w-fit invert" size="md">
+                Explore More
+              </CommonButton>
+            </Link>
+          )}
         </div>
       </section>
 

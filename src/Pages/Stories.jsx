@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import CreateStory from "../Components/Modals/CreateStory";
 import gsap from "gsap/dist/gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
@@ -10,8 +10,11 @@ import { showToastMessage } from "../utils/helpers";
 import CommonButton from "../Components/Common/CommonButton";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import UserContext from "../userContext/userContext";
 const Home = () => {
   const { stories } = useSelector((state) => state.stories);
+
+  const { auth } = useContext(UserContext);
 
   console.log(stories, "storiesList");
 
@@ -178,11 +181,15 @@ const Home = () => {
               )}
             </div>
             <div className="w-5/12">
-              <div className="flex  justify-end  mb-12">
-                <CommonButton styles="w-fit text-xl" size="sm">
-                  Create Account
-                </CommonButton>
-              </div>
+              {!auth?.isAuthenticated ? (
+                <div className="flex  justify-end  mb-12">
+                  <CommonButton styles="w-fit text-xl" size="sm">
+                    Create Account
+                  </CommonButton>
+                </div>
+              ) : (
+                ""
+              )}
               <div className="space-y-4">
                 <div className="p-4 space-y-4 rounded-xl bg-slate-200 ">
                   <p className="title4">Trending</p>
@@ -253,7 +260,9 @@ const Home = () => {
                                 <p className="body2b font-bold ">Mr. Sanket</p>
                               </div>
 
-                              <CommonButton size="sm" styles="w-fit text-xs" >Follow</CommonButton>
+                              <CommonButton size="sm" styles="w-fit text-xs">
+                                Follow
+                              </CommonButton>
                             </div>
                           </div>
                         ))}
