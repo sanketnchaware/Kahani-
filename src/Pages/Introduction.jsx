@@ -4,6 +4,10 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import TextInput from "../Components/Common/TextInput";
 import UserContext from "../userContext/userContext";
+import hero_logo from "../assets/svg/hero_logo.svg";
+import welcome from "../assets/svg/welcome.svg";
+import notification from "../assets/svg/notification.svg";
+import expressive from "../assets/svg/expressive.svg";
 
 const Introduction = () => {
   const { stories } = useSelector((state) => state.stories);
@@ -11,21 +15,33 @@ const Introduction = () => {
 
   const [email, setEmail] = useState("");
 
-  console.log(stories, "storiesList");
   return (
-    <div className="  divide-y-2">
-      <section className=" flex items-center px-44 bg-black text-white   min-h-screen">
-        <div className="w-full space-y-10">
-          <h2 className="text-center w-full">Write your Story here..</h2>
+    <div className="divide-y-2">
+      <section className="flex items-center px-44 bg-black text-white min-h-screen">
+        <div className="w-full space-y-6">
+          <img className="h-[50vh] m-auto" src={welcome} alt="hero_logo" />
+
+          <h4 className="text-center w-full">Hey, Welcome to Kahani.com !</h4>
+          <p className="title2 text-center w-full">A Home for Every Story.</p>
+        </div>
+      </section>
+
+      <section className="flex items-center px-44  text-black min-h-screen">
+        <div className="w-full space-y-4">
+          <img className="h-[45vh] m-auto" src={expressive} alt="hero_logo" />
+
+          <div>
+            <h2 className="text-center w-full">Start writing your story..</h2>
+          </div>
           {!auth?.isAuthenticated ? (
             <Link to="/signup" className="flex justify-center   w-full">
-              <CommonButton styles="w-fit invert" size="md">
+              <CommonButton styles="w-fit " size="md">
                 Create Account
               </CommonButton>
             </Link>
           ) : (
             <Link to="/stories" className="flex justify-center   w-full">
-              <CommonButton styles="w-fit invert" size="md">
+              <CommonButton styles="w-fit " size="md">
                 Explore More
               </CommonButton>
             </Link>
@@ -73,6 +89,7 @@ const Introduction = () => {
                 );
               })
             )}
+            <img className=" m-auto" src={hero_logo} alt="hero_logo" />
           </div>
 
           <Link to="/stories" className="block  w-fit">
@@ -83,7 +100,10 @@ const Introduction = () => {
         </div>
       </section>
 
-      <section className="flex justify-end px-44  bg-black text-white items-center    min-h-screen">
+      <section className="flex justify-between px-44  bg-black text-white items-center    min-h-screen">
+        <div>
+          <img className=" h-[50vh]" src={notification} alt="notification" />
+        </div>
         <div>
           <div className=" space-y-2">
             <p className="title2">Subscribe</p>

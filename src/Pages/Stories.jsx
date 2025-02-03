@@ -16,8 +16,6 @@ const Home = () => {
 
   const { auth } = useContext(UserContext);
 
-  console.log(stories, "storiesList");
-
   gsap.registerPlugin(ScrollTrigger);
 
   const [openCreateStory, setCreateOpenStory] = useState();
