@@ -2,13 +2,17 @@ import { ClickAwayListener } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UserContext from "../userContext/userContext";
+import axiosInstance from "../utils/axiosInstance";
+import { showToastMessage } from "../utils/helpers";
 
 const Navbar = () => {
   const { pathname } = useLocation();
-  const { auth } = useContext(UserContext);
-  const [profileOptions, setProfileOptions] = useState(false);
+  const {
+    auth: { isAuthenticated, user },
+  } = useContext(UserContext);
+  console.log("user:", user);
 
-  const isLoggedIn = auth?.isAuthenticated;
+  const [profileOptions, setProfileOptions] = useState(false);
 
   const handleProfileOptions = () => {
     setProfileOptions((prev) => !prev);
@@ -16,6 +20,21 @@ const Navbar = () => {
 
   const handleClickAway = () => {
     setProfileOptions(false);
+  };
+
+  const handleLogout = () => {
+    axiosInstance
+      .post("/auth/logout")
+      .then((response) => {
+        console.log(response);
+        showToastMessage(response?.data?.message);
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -28,7 +47,7 @@ const Navbar = () => {
           { name: "About", url: "/about-us" },
           { name: "Stories", url: "/stories" },
           { name: "Contact", url: "/contact-us" },
-          !isLoggedIn ? { name: "Login", url: "/login" } : null,
+          !isAuthenticated ? { name: "Login", url: "/login" } : null,
         ]
           .filter(Boolean)
           .map((item) => (
@@ -41,14 +60,14 @@ const Navbar = () => {
             </Link>
           ))}
 
-        {isLoggedIn && (
+        {isAuthenticated && (
           <ClickAwayListener onClickAway={handleClickAway}>
             <div className="relative">
               <div
                 onClick={handleProfileOptions}
                 className="flex items-center cursor-pointer"
               >
-                <p>Sanket Chaware</p>
+                <p>Hi {user?.firstname || "User"} !</p>
                 <img
                   src="/assets/icons/downarrow.svg"
                   className="w-6 h-6 mt-1"
@@ -58,22 +77,28 @@ const Navbar = () => {
 
               {profileOptions && (
                 <div className="absolute right-0 w-40 bg-white border rounded-sm shadow-md mt-2">
-                  <p className="flex gap-2 hover:bg-slate-100 items-center py-3 px-2 cursor-pointer">
+                  <Link
+                    to="/profile"
+                    className="flex gap-2 hover:bg-slate-100 items-center py-3 px-2 cursor-pointer"
+                  >
                     <img
                       src="/assets/icons/profile.svg"
                       className="w-5 h-5"
                       alt="profile"
                     />
                     Profile
-                  </p>
-                  <p className="flex gap-2 hover:bg-slate-100 items-center py-3 px-2 cursor-pointer">
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex gap-2 hover:bg-slate-100 items-center py-3 px-2 cursor-pointer"
+                  >
                     <img
                       src="/assets/icons/logout.svg"
                       className="w-5 h-5"
                       alt="logout"
                     />
                     Logout
-                  </p>
+                  </button>
                 </div>
               )}
             </div>

@@ -2,17 +2,14 @@ const express = require("express");
 const Story = require("../modals/story.model.js");
 const router = express.Router();
 
-// Function to generate custom ID
-async function generateCustomId() {
-  const latestStory = await Story.findOne().sort({ id: -1 });
-  const latestId = latestStory ? latestStory.id : 0;
-  return latestId + 1;
-}
-
 // GET: List all stories
 router.get("/", async (req, res) => {
   try {
-    const stories = await Story.find().lean().exec();
+    const stories = await Story.find()
+      .populate("user")
+      .populate("category")
+      .lean()
+      .exec();
     return res.status(200).send({ stories: stories, message: "Stories List" });
   } catch (err) {
     console.error(err); // Log the error for debugging
@@ -25,31 +22,26 @@ router.get("/", async (req, res) => {
 // POST: Create a new story
 router.post("/", async (req, res) => {
   try {
-    const { title, tags, description } = req.body;
-
-    // Validate input
-    if (!title || !description || !tags) {
-      return res.status(400).send({
-        message: "All fields (title, description, tags) are required",
-      });
-    }
-
-    // Generate a custom ID for the new story
-    const customid = await generateCustomId();
+    const { title, tags, description, user, category } = req.body;
 
     // Create a new story document
     const newStory = new Story({
-      title: title,
-      description: description,
-      tags: tags,
-      id: customid,
+      title,
+      user,
+      category,
+      description,
+      tags,
     });
 
     // Save the story to the database
     const savedStory = await newStory.save();
 
+    const populatedStory = await Story.findById(savedStory._id)
+      .populate("user")
+      .populate("category");
+
     return res.status(201).send({
-      data: savedStory,
+      data: populatedStory,
       message: "Story created successfully",
     });
   } catch (err) {
@@ -61,9 +53,14 @@ router.post("/", async (req, res) => {
 });
 
 // GET: Get a story by ID
+
 router.get("/:id", async (req, res) => {
   try {
-    const item = await Story.findOne({ id: req.params.id }).lean().exec();
+    const item = await Story.findOne({ _id: req.params.id })
+      .populate("user")
+      .populate("category")
+      .lean()
+      .exec();
     if (!item) {
       return res.status(404).send({ message: "Story not found" });
     }
@@ -78,10 +75,26 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/user/:user_id", async (req, res) => {
+  try {
+    const stories = await Story.find({ user: req.params.user_id })
+      .populate("user")
+      .populate("category")
+      .lean()
+      .exec();
+
+    if (stories.length < 1) {
+      return res.status(404).send({ message: "No stories found for the user" });
+    }
+    return res.status(200).send({ stories: stories, message: "Stories List" });
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
-    console.log(`Received DELETE request for story ID: ${req.params.id}`); // Log request for debugging
-    const item = await Story.findOneAndDelete({ id: req.params.id })
+    const item = await Story.findOneAndDelete({ _id: req.params.id })
       .lean()
       .exec();
     if (!item) {
@@ -96,29 +109,27 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// PATCH: Update a story by ID
 router.put("/:id", async (req, res) => {
   try {
-    const { title, description, tags } = req.body;
+    const { title, description, tags, user, category } = req.body;
 
-    // Check if required fields are present
-    if (!title || !description || !tags) {
-      return res.status(400).send({
-        message: "All fields (title, description, tags) are required",
-      });
-    }
-
-    const item = await Story.findOneAndUpdate(
-      { id: req.params.id },
-      { title, description, tags },
+    const updatedStory = await Story.findOneAndUpdate(
+      { _id: req.params.id },
+      { title, description, user, category, tags },
       { new: true }
-    );
-    if (!item) {
+    )
+      .populate("user")
+      .populate("category")
+      .lean()
+      .exec();
+
+    if (!updatedStory) {
       return res.status(404).send({ message: "Story not found" });
     }
+
     return res
       .status(200)
-      .send({ story: item, message: "Story updated successfully" });
+      .send({ story: updatedStory, message: "Story updated successfully" });
   } catch (err) {
     console.error(err); // Log the error for debugging
     return res

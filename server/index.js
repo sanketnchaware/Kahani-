@@ -2,6 +2,7 @@ const express = require("express");
 const Storycontroller = require("./controllers/story.controller");
 const UserController = require("./controllers/user.controller");
 const AuthController = require("./controllers/auth.controller");
+const CategoryController = require("./controllers/category.controller");
 
 const cors = require("cors");
 const connect = require("./configs/db");
@@ -23,10 +24,10 @@ app.get("/", (req, res) => {
   return res.json({ message: "Hello, world!" });
 });
 
-// Use controllers for stories and users
 app.use("/stories", Storycontroller);
 app.use("/users", UserController);
-app.use("/login", AuthController);
+app.use("/auth", AuthController);
+app.use("/categories", CategoryController);
 
 // Catch-all for undefined routes (should be at the end of your route definitions)
 app.all("*", (req, res) => {

@@ -1,8 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Signup from "../../Components/LoginPages/Signup";
-import Login from "../../Components/LoginPages/Login";
-import UserContext from "../../userContext/userContext";
+import UserContext from "../userContext/userContext";
+import Login from "../Components/LoginPages/Login";
 
 const Auth = () => {
   const { pathname } = useLocation();

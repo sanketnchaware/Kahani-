@@ -31,5 +31,4 @@ const storySlice = createSlice({
   },
 });
 
-export const { addStory } = storySlice.actions;
 export default storySlice.reducer;

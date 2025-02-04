@@ -32,18 +32,24 @@ const Login = () => {
 
     const { email, password } = params;
     axiosInstance
-      .post("/login", {
+      .post("/auth/login", {
         email: email,
         password: password,
       })
       .then((response) => {
         localStorage.setItem("authToken", response.data.token);
-        setAuth({ token: response.data.token, isAuthenticated: true });
-        showToastMessage(response.data.message, "success");
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        setAuth({
+          user: response.data.user,
+          token: response.data.token,
+          isAuthenticated: true,
+        });
+        showToastMessage(response?.data?.message, "success");
         navigate("/");
       })
       .catch((error) => {
         console.log("error:", error);
+        showToastMessage(error?.response?.data?.message, "error");
       });
   };
 

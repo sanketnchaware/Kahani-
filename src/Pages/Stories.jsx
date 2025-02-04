@@ -14,8 +14,11 @@ import UserContext from "../userContext/userContext";
 const Home = () => {
   const { stories } = useSelector((state) => state.stories);
 
-  const { auth } = useContext(UserContext);
+  const {
+    auth: { user, isAuthenticated },
+  } = useContext(UserContext);
 
+  console.log("user:", user);
   gsap.registerPlugin(ScrollTrigger);
 
   const [openCreateStory, setCreateOpenStory] = useState();
@@ -59,7 +62,7 @@ const Home = () => {
 
     storyId
       ? axiosInstance
-          .patch(`/stories/${storyId}`, params)
+          .patch(`/stories/${storyId}`, { ...params, user: user?.id })
           .then((res) => {
             SetStoryId("");
             setParams(fields);
@@ -71,11 +74,11 @@ const Home = () => {
           })
           .finally(() => {})
       : axiosInstance
-          .post("/stories", params)
+          .post("/stories", { ...params, user: user?.id })
           .then((res) => {
             toggleStoryModal();
             setParams(fields);
-            showToastMessage("Story Added successfully", "success");
+            showToastMessage("Story Created successfully", "success");
           })
           .catch((err) => {
             console.log("err:", err);
@@ -179,7 +182,7 @@ const Home = () => {
               )}
             </div>
             <div className="w-5/12">
-              {!auth?.isAuthenticated ? (
+              {!isAuthenticated ? (
                 <div className="flex  justify-end  mb-12">
                   <CommonButton styles="w-fit text-xl" size="sm">
                     Create Account

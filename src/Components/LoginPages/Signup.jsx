@@ -1,4 +1,4 @@
-// src/Signup.js
+
 import React, { useState } from "react";
 import CommonButton from "../Common/CommonButton";
 import { Link, useNavigate } from "react-router-dom";
@@ -54,7 +54,9 @@ const Signup = () => {
     <div className="flex items-center justify-center h-screen bg-blue-50">
       <div className="bg-white rounded-lg shadow-md p-8 max-w-lg w-full">
         <form className="mb-4 space-y-4" onSubmit={handleSubmit}>
-          <h2 className="text-3xl font-bold text-center ">Sign in </h2>
+          <h2 className="text-3xl font-bold text-center ">
+            Create New Account{" "}
+          </h2>
           <TextInput
             type="text"
             name="firstname"
@@ -118,7 +120,7 @@ const Signup = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-500">or</p>
 
-          <Link className="underline text-sm" to="/signup">
+          <Link className="underline text-sm" to="/login">
             Already Have an account ?
           </Link>
         </div>

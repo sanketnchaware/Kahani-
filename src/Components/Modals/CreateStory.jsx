@@ -1,11 +1,18 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import cross from "../../assets/icons/cross.svg";
 import TextInput from "../Common/TextInput";
 import { showToastMessage } from "../../utils/helpers";
 import CommonButton from "../Common/CommonButton";
+import SelectDropdown from "../Common/SelectDropdown";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategoryDropdown } from "../../features/dropdown";
 
+const options = [
+  { value: "option1", label: "Option 1" },
+  { value: "option2", label: "Option 2" },
+  { value: "option3", label: "Option 3" },
+];
 const CreateStory = ({
   open,
   toggleOpen,
@@ -18,6 +25,14 @@ const CreateStory = ({
   errors,
 }) => {
   const [tag, setTag] = useState("");
+
+  const { categories } = useSelector((state) => state.dropdown);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCategoryDropdown());
+  }, []);
 
   // const HandleTags = (e) => {
   //   let newTag = tag.startsWith("#") ? tag.slice(1) : tag;
@@ -56,12 +71,12 @@ const CreateStory = ({
     axiosInstance
       .get(`/stories/${storyId}`)
       .then((res) => {
-        console.log("res:", res?.data.story);
         setParams({
           ...params,
           title: res?.data?.story?.title,
           description: res?.data?.story?.description,
           tags: res?.data?.story?.tags,
+          category: res?.data?.story?.category?._id,
         });
       })
       .catch((err) => {
@@ -75,8 +90,8 @@ const CreateStory = ({
 
   return (
     <div
-      className={`fixed left-0 right-0 top-0 bottom-0  flex items-center justify-center  m-auto  w-full h-screen ${
-        open ? " z-[999] bg-black-50 backdrop-blur-xl" : "-z-[999]"
+      className={`fixed left-0 right-0 top-0 bottom-0 flex items-center justify-center m-auto w-full h-screen ${
+        open ? "z-[999] bg-black-50 backdrop-blur-xl" : "-z-[999]"
       }`}
     >
       {open ? (
@@ -128,6 +143,16 @@ const CreateStory = ({
                     placeholder="Enter tag name"
                     value={tag}
                     onChange={handleTagChange}
+                  />
+                  <SelectDropdown
+                    showvalue="_id"
+                    name="category"
+                    value={params.category}
+                    onChange={handleChange}
+                    // options={categories}
+                    options={categories}
+                    placeholder="Choose category"
+                    error={errors.category}
                   />
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">

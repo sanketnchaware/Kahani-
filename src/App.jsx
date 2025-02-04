@@ -6,9 +6,9 @@ import Profile from "./Pages/Profile";
 import GoogleCallback from "./Components/GoogleCallback";
 import Introduction from "./Pages/Introduction";
 import Stories from "./Pages/Stories";
-import About from "./Pages/About";
-import Contact from "./Pages/Contact";
-import Auth from "./Pages/Auth/Auth";
+import AboutUs from "./Pages/AboutUs";
+import ContactUs from "./Pages/ContactUs";
+import Auth from "./Pages/Auth";
 
 const App = () => {
   return (
@@ -21,9 +21,9 @@ const App = () => {
           <Route path="/signup" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/stories" element={<Stories />} />
-          <Route path="/about-us" element={<About />} />
+          <Route path="/about-us" element={<AboutUs />} />
 
-          <Route path="/contact-us" element={<Contact />} />
+          <Route path="/contact-us" element={<ContactUs />} />
         </Route>
       </Routes>
     </BrowserRouter>

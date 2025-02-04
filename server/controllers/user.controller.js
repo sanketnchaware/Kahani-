@@ -4,13 +4,6 @@ const router = express.Router();
 
 const User = require("../modals/user.model");
 
-// generate Custom Id
-async function generateCustomId() {
-  const latestUser = await User.findOne().sort({ id: -1 });
-  const latestId = latestUser ? latestUser.id : 0;
-  return latestId + 1 || 1;
-}
-
 //  listing
 router.get("/", async (req, res) => {
   try {
@@ -27,21 +20,9 @@ router.get("/", async (req, res) => {
 
 // Create
 router.post("/", async (req, res) => {
-  const userId = await generateCustomId();
-
-  console.log(userId, "userId");
   try {
-    // 1. method1 using data.save()
-    // const data = new User({
-    //   ...req.body,
-    //   id: userId,
-    // });
-    // const savedUser = await data.save();
-
-    //2.  method2
     const savedUser = await User.create({
       ...req.body,
-      id: userId,
     });
 
     return res.status(200).send({
@@ -112,7 +93,7 @@ router.put("/:id", async (req, res) => {
 // Delete
 router.delete("/:id", async (req, res) => {
   try {
-    const existingUser = await User.findOneAndDelete({ id: req.params.id })
+    const existingUser = await User.findOneAndDelete({ _id: req.params.id })
       .lean()
       .exec();
 

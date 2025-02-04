@@ -9,9 +9,34 @@ import welcome from "../assets/svg/welcome.svg";
 import notification from "../assets/svg/notification.svg";
 import expressive from "../assets/svg/expressive.svg";
 
+const storyCategories = [
+  "Adventure",
+  "Comedy",
+  "Drama",
+  "Fantasy",
+  "Historical Fiction",
+  "Horror",
+  "Mystery",
+  "Romance",
+  "Science Fiction",
+  "Thriller",
+  "Western",
+  "Dystopian",
+  "Magical Realism",
+  "Realist",
+  "Satire",
+  "Tragedy",
+  "Mythology",
+  "Folklore",
+  "Fairy Tale",
+  "Parable",
+];
+
 const Introduction = () => {
   const { stories } = useSelector((state) => state.stories);
-  const { auth } = useContext(UserContext);
+  const {
+    auth: { user, isAuthenticated },
+  } = useContext(UserContext);
 
   const [email, setEmail] = useState("");
 
@@ -21,7 +46,9 @@ const Introduction = () => {
         <div className="w-full space-y-6">
           <img className="h-[50vh] m-auto" src={welcome} alt="hero_logo" />
 
-          <h4 className="text-center w-full">Hey, Welcome to Kahani.com !</h4>
+          <h4 className="text-center w-full">
+            Hey {user?.firstname}, Welcome to Kahani.com !
+          </h4>
           <p className="title2 text-center w-full">A Home for Every Story.</p>
         </div>
       </section>
@@ -33,7 +60,7 @@ const Introduction = () => {
           <div>
             <h2 className="text-center w-full">Start writing your story..</h2>
           </div>
-          {!auth?.isAuthenticated ? (
+          {!isAuthenticated ? (
             <Link to="/signup" className="flex justify-center   w-full">
               <CommonButton styles="w-fit " size="md">
                 Create Account
@@ -42,31 +69,47 @@ const Introduction = () => {
           ) : (
             <Link to="/stories" className="flex justify-center   w-full">
               <CommonButton styles="w-fit " size="md">
-                Explore More
+                Add Story
               </CommonButton>
             </Link>
           )}
         </div>
       </section>
 
+      <section className="flex items-center justify-center px-44  bg-black text-white min-h-screen">
+        <div className="space-y-20">
+          <h4 className=" text-center w-full">Read by Categories</h4>
+
+          <div className="grid grid-cols-4 w-full items-center h-full">
+            {React.Children.toArray(
+              storyCategories.map((item) => {
+                return <p className="p-4 body1 text-center">{item}</p>;
+              })
+            )}
+          </div>
+        </div>
+      </section>
+
       <section className="w-10/12 m-auto   flex items-center  min-h-screen">
         <div className="space-y-8">
-          <h2 className="">Best Stories For Today</h2>
+          <h4 className="">Best Stories For Today</h4>
           <div className=" grid grid-cols-4 gap-6">
             {React.Children.toArray(
-              stories?.map(({ title, description }) => {
+              stories?.map(({ title, description, user }) => {
                 return (
                   <div className="   rounded-lg shadow-sameshadow">
                     <div className="h-44  w-full relative">
                       <div className="absolute left-4 top-4 flex gap-1 z-10 bg-white rounded-full body4 shadow-inner px-2 items-center py-1">
-                        <div className="w-6 h-6  rounded-full overflow-hidden">
+                        <div className="w-6 h-6 rounded-full overflow-hidden">
                           <img
-                            className="object-cover  w-full h-full"
+                            className="object-cover w-full h-full"
                             src="https://images.pexels.com/photos/3770357/pexels-photo-3770357.jpeg?auto=compress&cs=tinysrgb&w=600"
                             alt=""
                           />{" "}
                         </div>
-                        <span>Mr. Sanket</span>
+                        <span>
+                          {user?.firstname} {user?.lastname}
+                        </span>
                       </div>
                       <img
                         className="rounded-tl-lg rounded-tr-lg grayscale  w-full h-full object-cover"
